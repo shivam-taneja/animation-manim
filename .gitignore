@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Manim Output Files
+media/
+*.mp4
+*.gif
+*.png
+*.mov
+*.webm
+
+# Keep only the source files, ignore all renders
+# If you want to keep specific final outputs, you can add exceptions like:
+# !final_output.gif
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Jupyter Notebooks (if you use them)
+.ipynb_checkpoints/
+*.ipynb
+
+# Manim Cache
+__pycache__/
+.manim_cache/
+
+# Temporary files
+*.tmp
+*.bak
