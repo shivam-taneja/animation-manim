@@ -1,0 +1,1 @@
+manim -pqh your_file.py YourSceneName
