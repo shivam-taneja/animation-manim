@@ -22,11 +22,6 @@ class SagaStory(Scene):
         status_line.to_edge(DOWN, buff=0.4)
         self.add(status_line)
 
-        def update_status(new_text, color=TEXT_COLOR):
-            new_status = Text(new_text, font=MAIN_FONT, font_size=22, color=color)
-            new_status.to_edge(DOWN, buff=0.4)
-            self.play(Transform(status_line, new_status), run_time=0.3)
-
         # --- INTRO: Title ---
         title = Text("Saga Choreography", font=MAIN_FONT, weight=BOLD, font_size=48, color=NODE_COLOR)
         subtitle = Text("Decentralized Transaction Management", font=MAIN_FONT, font_size=20, color=GRAY_COLOR)
@@ -42,8 +37,6 @@ class SagaStory(Scene):
         )
 
         # --- SETUP: Services Architecture ---
-        update_status("Two microservices: Booking and Discount")
-
         # Booking Service (Left)
         booking_box = RoundedRectangle(height=1.8, width=2.8, corner_radius=0.15, color=NODE_COLOR, stroke_width=3, fill_opacity=0.1)
         booking_lbl = Text("Booking\nService", font=MAIN_FONT, font_size=18, color=NODE_COLOR).move_to(booking_box)
@@ -69,8 +62,6 @@ class SagaStory(Scene):
         self.wait(0.3)
 
         # --- REDIS: The Quota Tracker ---
-        update_status("Redis tracks discount quota (Last one available!)")
-
         # Redis visualization
         redis_outline = VGroup(
             Ellipse(width=1.3, height=0.45, color=DB_COLOR, stroke_width=3),
@@ -88,8 +79,6 @@ class SagaStory(Scene):
         self.wait(0.3)
 
         # --- THE RACE: Two Users ---
-        update_status("Two users try to grab the last discount simultaneously!")
-
         # User A (Success - Green theme)
         user_a_circle = Circle(radius=0.35, color=SUCCESS_COLOR, fill_opacity=0.2, stroke_width=3)
         user_a_txt = Text("A", font_size=20, color=SUCCESS_COLOR, weight=BOLD)
@@ -108,8 +97,6 @@ class SagaStory(Scene):
         self.play(FadeOut(no_global), run_time=0.3)
 
         # --- STEP 1: Both hit Booking Service ---
-        update_status("Both requests hit Booking Service at the same time")
-
         arrow_a_to_booking = Arrow(user_a.get_bottom(), booking_box.get_top() + LEFT*0.3, color=SUCCESS_COLOR, buff=0.1, stroke_width=4)
         arrow_b_to_booking = Arrow(user_b.get_bottom(), booking_box.get_top() + RIGHT*0.3, color=FAIL_COLOR, buff=0.1, stroke_width=4)
         
@@ -137,8 +124,6 @@ class SagaStory(Scene):
         self.wait(0.2)
 
         # --- STEP 2: Event Emission (Choreography!) ---
-        update_status("Services react to events (not controlled by one service)")
-
         event_arrow = CurvedArrow(
             booking_box.get_right() + UP*0.3,
             discount_box.get_left() + UP*0.3,
@@ -153,7 +138,6 @@ class SagaStory(Scene):
         self.play(FadeOut(arrow_a_to_booking), FadeOut(arrow_b_to_booking), run_time=0.3)
 
         # --- STEP 3: THE CRITICAL MOMENT - Redis Check ---
-        update_status("Discount Service checks Redis quota...", color=SEC_COLOR)
 
         # Both services try to claim
         check_a = DashedLine(discount_box.get_bottom() + LEFT*0.5, redis_grp.get_top() + LEFT*0.3, color=SUCCESS_COLOR, stroke_width=3)
@@ -162,7 +146,6 @@ class SagaStory(Scene):
         self.play(Create(check_a), Create(check_b), run_time=0.5)
         
         # User A wins the race!
-        update_status("User A claims it first! ✓", color=SUCCESS_COLOR)
         self.play(
             Indicate(redis_val, color=SUCCESS_COLOR, scale_factor=1.3),
             check_a.animate.set_stroke(width=5),
@@ -175,7 +158,6 @@ class SagaStory(Scene):
         self.wait(0.2)
 
         # User B fails
-        update_status("User B arrives... but quota is 0! ❌", color=FAIL_COLOR)
         self.play(
             Flash(redis_val, color=FAIL_COLOR, flash_radius=0.5),
             check_b.animate.set_stroke(width=5),
@@ -189,7 +171,6 @@ class SagaStory(Scene):
         self.play(FadeOut(check_a), FadeOut(check_b), FadeOut(x_mark), run_time=0.3)
 
         # --- STEP 4: THE SAGA - Rollback/Compensation ---
-        update_status("Each service knows how to UNDO its own work!", color=FAIL_COLOR)
 
         # Failure event back to Booking
         rollback_arrow = CurvedArrow(
@@ -205,7 +186,6 @@ class SagaStory(Scene):
         self.play(Create(rollback_arrow), Write(rollback_lbl), run_time=0.6)
 
         # Booking compensates (rolls back User B)
-        update_status("Booking Service compensates: Cancel User B", color=FAIL_COLOR)
         
         cross_b = Line(pending_b.get_corner(UL), pending_b.get_corner(DR), color=FAIL_COLOR, stroke_width=4)
         cross_b2 = Line(pending_b.get_corner(UR), pending_b.get_corner(DL), color=FAIL_COLOR, stroke_width=4)
@@ -221,7 +201,6 @@ class SagaStory(Scene):
         self.play(FadeOut(pending_b), FadeIn(cancelled), run_time=0.3)
 
         # User A confirmed
-        update_status("User A confirmed! System is safe ✓", color=SUCCESS_COLOR)
         
         check_mark = Text("✓", font_size=24, color=SUCCESS_COLOR, weight=BOLD).next_to(pending_a, RIGHT, buff=0.2)
         confirmed = Text("CONFIRMED", font=MAIN_FONT, font_size=13, color=SUCCESS_COLOR, weight=BOLD)
